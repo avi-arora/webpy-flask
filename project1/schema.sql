@@ -1,0 +1,12 @@
+
+CREATE TABLE Book
+(
+    Id SERIAL PRIMARY KEY,
+    Isbn VARCHAR ,
+    Title VARCHAR NOT NULL, 
+    Author VARCHAR NOT NULL, 
+    Year INTEGER NOT NULL, 
+    UNIQUE(Isbn)
+)
+
+

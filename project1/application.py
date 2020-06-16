@@ -74,10 +74,18 @@ def authenticate():
     return redirect(url_for("search"))
 
 
-@app.route("/search")
+@app.route("/search",methods=['GET'])
 @authorize
 def search():
-    return render_template("search.html")
+    query = request.args.get("q")
+    searchResult = []
+    if query != None:
+        searchResult = db.execute("SELECT * FROM Book WHERE \
+        (title = :query OR author = :query or isbn = :query) \
+         OR (isbn LIKE :exp OR title LIKE :exp OR author LIKE :exp)"
+         ,{"query": query, "exp": "%" + query}).fetchall()
+
+    return render_template("search.html", searchResult=searchResult)
 
 @app.route("/book")
 @authorize
