@@ -5,45 +5,50 @@
 {% endblock %}
 {% include "navbar.html" %}
 {% block body %}
-<div class="container">
-    <div class="s130">
-        <form method="GET" action="{{url_for('search')}}">
-            <div class="inner-form">
-                <div class="input-field first-wrap">
-                    <div class="svg-wrapper">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path
-                                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z">
-                            </path>
-                        </svg>
-                    </div>
-                    <input id="search" name="q" type="text" placeholder="search books here" />
-                </div>
-                <div class="input-field second-wrap">
-                    <button class="btn-search" type="submit">SEARCH</button>
-                </div>
-            </div>
-            <span class="info">ex. isbn,title,author,year</span>
-        </form>
-    </div>
-    <h2>Search Result</h2>
-    {% if searchResult | length > 0 %}
 
-    <div class="recent-book-sec">
-        <div class="row">
-            {% for book in searchResult %}
-            <div class="col-md-3">
-                <div class="item">
-                    <img src="https://i.pinimg.com/originals/a4/aa/c1/a4aac1f3d86869bcfd2833e8be768014.jpg" alt="img">
-                    <h3><a href="#">{{ book.title }} </a></h3>
-                    <h6><span class="price">$19</span> / <a href="#">Buy Now</a></h6>
+<div class="container py-5">
+    <div class="row py-5">
+        <div class="col-sm-12">
+            <form method="GET" action="{{url_for('search')}}">
+                <div class="input-group mb-3">
+                    <input name="q" type="text" class="form-control" placeholder="Search Author, Title, ISBN">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit">Search</button>
+                    </div>
                 </div>
-            </div>
-            {% endfor %}
+            </form>
         </div>
     </div>
-
-    {% else %}
-    <h1>No Result Found</h1>
+    {% if searchResult | length > 0 %}
+    <h4>Search Results</h4>
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                {% for book in searchResult %}
+                <div class="col-md-4">
+                    <div class="card mb-4 box-shadow">
+                        <img class="img-responsive"
+                            src="http://nma.kcc.hawaii.edu/gargiulo/tests/portfolios/myportfolio2/img/placeholder-4x1-hero-book.gif"
+                            alt="Card image cap">
+                        <div class="card-body">
+                            <p class="card-text">{{book.title}}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <a href="{{url_for('book',isbn=book.isbn)}}" class="btn btn-sm btn-outline-secondary">View</a>
+                                </div>
+                                <small class="text-muted">{{book.author}} - {{book.year}}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% elif request.args.get("q") != None %}
+    <div class="row">
+        <h4 class="text-center">No Result Found :(</h4>
+    </div>
     {% endif %}
-    {% endblock %}
+</div>
+{% endblock %}

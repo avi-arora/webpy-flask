@@ -1,4 +1,4 @@
-import os
+import os, requests
 from functools import wraps
 from flask import Flask, session, render_template, request, url_for, redirect
 from flask_session import Session
@@ -6,6 +6,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 app = Flask(__name__)
+
+API_KEY = "yeFY55rpiY2HDly04zQbw"
+BASE_URL = "https://www.goodreads.com"
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -23,9 +26,9 @@ db = scoped_session(sessionmaker(bind=engine))
 
 def authorize(f):
     @wraps(f)
-    def wrapper():
+    def wrapper(*args, **kargs):
         if session.get("username") != None:
-            return f()
+            return f(*args, **kargs)
         else:
             return redirect(url_for("login"))
     return wrapper
@@ -87,9 +90,12 @@ def search():
 
     return render_template("search.html", searchResult=searchResult)
 
-@app.route("/book")
+@app.route("/book/<string:isbn>")
 @authorize
-def book():
+def book(isbn):
+    #get book from goodread api
+    response = requests.get(BASE_URL + "/book/review_counts.json", params={"isbns":isbn,"key":API_KEY})
+    data = response.json()
     return render_template("book.html")
 
 @app.route("/logout")
